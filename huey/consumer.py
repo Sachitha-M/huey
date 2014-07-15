@@ -33,11 +33,11 @@ class ConsumerThread(threading.Thread):
     def loop(self, now):
         raise NotImplementedError
 
-    def run(self):
-        while not self.shutdown.is_set():
-            self.loop()
-        self._logger.debug('Thread shutting down')
-        self.on_shutdown()
+    #def run(self):
+        #while not self.shutdown.is_set():
+            #self.loop()
+        #self._logger.debug('Thread shutting down')
+        #self.on_shutdown()
 
     def enqueue(self, task):
         try:
@@ -106,8 +106,8 @@ class WorkerThread(ConsumerThread):
         self._logger = logging.getLogger('huey.consumer.WorkerThread')
         super(WorkerThread, self).__init__(huey, utc, shutdown)
 
-    def loop(self):
-        self.check_message()
+    #def loop(self):
+        #self.check_message()
 
     def check_message(self):
         self._logger.debug('Checking for message')
@@ -203,10 +203,10 @@ class Consumer(object):
             self.shutdown()
 
     def start(self):
-        self._logger.info('%d worker threads' % self.workers)
+        #self._logger.info('%d worker threads' % self.workers)
 
-        self._set_signal_handler()
-        self._log_registered_commands()
+        #self._set_signal_handler()
+        #self._log_registered_commands()
         self._create_threads()
 
         self._logger.info('Starting scheduler thread')
@@ -216,9 +216,9 @@ class Consumer(object):
         for worker in self.worker_threads:
             worker.start()
 
-        if self.periodic:
-            self._logger.info('Starting periodic task scheduler thread')
-            self.periodic_t.start()
+        #if self.periodic:
+            #self._logger.info('Starting periodic task scheduler thread')
+            #self.periodic_t.start()
 
     def shutdown(self):
         self._logger.info('Shutdown initiated')
@@ -255,10 +255,10 @@ class Consumer(object):
             worker_t.name = 'Worker %d' % (i + 1)
             self.worker_threads.append(worker_t)
 
-        if self.periodic:
-            self.periodic_t = PeriodicTaskThread(
-                self.huey, self.utc, self._shutdown)
-            self.periodic_t.daemon = True
-            self.periodic_t.name = 'Periodic Task'
-        else:
-            self.periodic_t = None
+        #if self.periodic:
+            #self.periodic_t = PeriodicTaskThread(
+                #self.huey, self.utc, self._shutdown)
+            #self.periodic_t.daemon = True
+            #self.periodic_t.name = 'Periodic Task'
+        #else:
+            #self.periodic_t = None
