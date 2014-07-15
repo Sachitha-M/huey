@@ -74,7 +74,7 @@ class Huey(object):
         self.store_none = store_none
         self.always_eager = always_eager
 
-    def task(self, retries=0, retry_delay=0, retries_as_argument=False,
+    def task(huey, retries=0, retry_delay=0, retries_as_argument=False,
              name=None):
         def decorator(func):
             """
@@ -97,7 +97,7 @@ class Huey(object):
                     execute_time=eta,
                     retries=retries,
                     retry_delay=retry_delay)
-                return self.enqueue(cmd)
+                return huey.enqueue(cmd)
 
             func.schedule = schedule
             func.task_class = klass
