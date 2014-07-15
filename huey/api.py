@@ -108,7 +108,7 @@ class Huey(object):
                     (args, kwargs),
                     retries=retries,
                     retry_delay=retry_delay)
-                return self.enqueue(cmd)
+                return huey.enqueue(cmd)
             return inner_run
         return decorator
 
