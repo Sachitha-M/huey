@@ -129,8 +129,7 @@ class WorkerThread(ConsumerThread):
             self.handle_task(task, self.get_now())
         elif exc_raised or not self.huey.blocking:
             self.sleep()
-        else:
-            self._logger.error('Task worker stopped')
+
     def sleep(self):
         if self.delay > self.max_delay:
             self.delay = self.max_delay
@@ -157,7 +156,6 @@ class WorkerThread(ConsumerThread):
         except DataStorePutException:
             self._logger.warn('Error storing result', exc_info=1)
         except:
-            
             self._logger.error('Unhandled exception in worker thread',
                                exc_info=1)
             self.huey.emit_task('error', task, error=True)
