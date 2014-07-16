@@ -35,8 +35,7 @@ class ConsumerThread(threading.Thread):
 
     def run(self):
         while not self.shutdown.is_set():
-            #self.loop()
-            self.check_message()
+            self.loop()
         self._logger.debug('Thread shutting down')
         self.on_shutdown()
 
@@ -107,8 +106,8 @@ class WorkerThread(ConsumerThread):
         self._logger = logging.getLogger('huey.consumer.WorkerThread')
         super(WorkerThread, self).__init__(huey, utc, shutdown)
 
-    #def loop(self):
-        #self.check_message()
+    def loop(self):
+        self.check_message()
 
     def check_message(self):
         self._logger.debug('waiting for receipt of command')
