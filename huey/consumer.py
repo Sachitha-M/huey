@@ -152,11 +152,11 @@ class WorkerThread(ConsumerThread):
             self.huey.execute(task)
             self.huey.emit_task('finished', task)
             self._logger.debug('waiting for receipt of command')
-        except:
-            self._logger.error('Task worker stopped')
+        
         except DataStorePutException:
             self._logger.warn('Error storing result', exc_info=1)
         except:
+            self._logger.error('Task worker stopped')
             self._logger.error('Unhandled exception in worker thread',
                                exc_info=1)
             self.huey.emit_task('error', task, error=True)
