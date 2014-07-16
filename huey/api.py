@@ -74,42 +74,7 @@ class Huey(object):
         self.store_none = store_none
         self.always_eager = always_eager
 
-    def task(huey, retries=0, retry_delay=0, retries_as_argument=False):
-        def decorator(func):
-            """
-            Decorator to execute a function out-of-band via the consumer.
-            """
-            klass = create_task(QueueTask, func, retries_as_argument)
-
-            def schedule(args=None, kwargs=None, eta=None, delay=None,
-                         convert_utc=True):
-                if delay and eta:
-                    raise ValueError('Both a delay and an eta cannot be '
-                                     'specified at the same time')
-                if delay:
-                    eta = (datetime.datetime.now() +
-                           datetime.timedelta(seconds=delay))
-                if convert_utc and eta:
-                    eta = local_to_utc(eta)
-                cmd = klass(
-                    (args or (), kwargs or {}),
-                    execute_time=eta,
-                    retries=retries,
-                    retry_delay=retry_delay)
-                return huey.enqueue(cmd)
-
-            func.schedule = schedule
-            func.task_class = klass
-
-            @wraps(func)
-            def inner_run(*args, **kwargs):
-                cmd = klass(
-                    (args, kwargs),
-                    retries=retries,
-                    retry_delay=retry_delay)
-                return huey.enqueue(cmd)
-            return inner_run
-        return decorator
+    
 
     def periodic_task(self, validate_datetime, name=None):
         """
@@ -377,6 +342,43 @@ class QueueTask(with_metaclass(QueueTaskMetaClass)):
         self.execute_time = execute_time
         self.retries = retries
         self.retry_delay = retry_delay
+
+    def task(huey, retries=0, retry_delay=0, retries_as_argument=False):
+        def decorator(func):
+            """
+            Decorator to execute a function out-of-band via the consumer.
+            """
+            klass = create_task(QueueTask, func, retries_as_argument)
+
+            def schedule(args=None, kwargs=None, eta=None, delay=None,
+                         convert_utc=True):
+                if delay and eta:
+                    raise ValueError('Both a delay and an eta cannot be '
+                                     'specified at the same time')
+                if delay:
+                    eta = (datetime.datetime.now() +
+                           datetime.timedelta(seconds=delay))
+                if convert_utc and eta:
+                    eta = local_to_utc(eta)
+                cmd = klass(
+                    (args or (), kwargs or {}),
+                    execute_time=eta,
+                    retries=retries,
+                    retry_delay=retry_delay)
+                return huey.enqueue(cmd)
+
+            func.schedule = schedule
+            func.task_class = klass
+
+            @wraps(func)
+            def inner_run(*args, **kwargs):
+                cmd = klass(
+                    (args, kwargs),
+                    retries=retries,
+                    retry_delay=retry_delay)
+                return huey.enqueue(cmd)
+            return inner_run
+        return decorator
 
     def create_id(self):
         return str(uuid.uuid4())
