@@ -304,8 +304,8 @@ class AsyncData(object):
         else:
             return self._result
 
-    def get(self, blocking=False, timeout=None, backoff=1.15, max_delay=1.0,
-            revoke_on_timeout=False):
+    def get(self, blocking=True, timeout=None, backoff=1.15, max_delay=1.0,
+            revoke_on_timeout=True):
         if not blocking:
             res = self._get()
             if res is not EmptyData:
