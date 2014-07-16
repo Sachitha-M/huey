@@ -36,7 +36,6 @@ class ConsumerThread(threading.Thread):
     def run(self):
         while not self.shutdown.is_set():
             self.loop()
-            
         self._logger.debug('Thread shutting down')
         self.on_shutdown()
 
@@ -111,7 +110,7 @@ class WorkerThread(ConsumerThread):
         self.check_message()
 
     def check_message(self):
-        self._logger.debug('waiting for receipt of command')
+        
         task = exc_raised = None
         try:
             task = self.huey.dequeue()
@@ -129,7 +128,6 @@ class WorkerThread(ConsumerThread):
             self.delay = self.default_delay
             self.handle_task(task, self.get_now())
         elif exc_raised or not self.huey.blocking:
-            self._logger.error('Task not completed')
             self.sleep()
 
     def sleep(self):
@@ -153,6 +151,9 @@ class WorkerThread(ConsumerThread):
             self.huey.emit_task('started', task)
             self.huey.execute(task)
             self.huey.emit_task('finished', task)
+            self._logger.debug('waiting for receipt of command')
+        except:
+            self._logger.error('Task worker stopped')
         except DataStorePutException:
             self._logger.warn('Error storing result', exc_info=1)
         except:
