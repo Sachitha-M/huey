@@ -36,6 +36,7 @@ class ConsumerThread(threading.Thread):
     def run(self):
         while not self.shutdown.is_set():
             self.loop()
+            consumer._logger.error('Task not completed')
         self._logger.debug('Thread shutting down')
         self.on_shutdown()
 
@@ -128,6 +129,7 @@ class WorkerThread(ConsumerThread):
             self.delay = self.default_delay
             self.handle_task(task, self.get_now())
         elif exc_raised or not self.huey.blocking:
+             
             self.sleep()
 
     def sleep(self):
