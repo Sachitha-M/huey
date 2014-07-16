@@ -33,11 +33,11 @@ class ConsumerThread(threading.Thread):
     def loop(self, now):
         raise NotImplementedError
 
-    #def run(self):
-        #while not self.shutdown.is_set():
-            #self.loop()
-        #self._logger.debug('Thread shutting down')
-        #self.on_shutdown()
+    def run(self):
+        while not self.shutdown.is_set():
+            self.loop()
+        self._logger.debug('Thread shutting down')
+        self.on_shutdown()
 
     def enqueue(self, task):
         try:
