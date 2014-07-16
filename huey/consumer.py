@@ -129,7 +129,8 @@ class WorkerThread(ConsumerThread):
             self.handle_task(task, self.get_now())
         elif exc_raised or not self.huey.blocking:
             self.sleep()
-        else self._logger.error('Task worker stopped')
+        else:
+            self._logger.error('Task worker stopped')
     def sleep(self):
         if self.delay > self.max_delay:
             self.delay = self.max_delay
