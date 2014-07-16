@@ -106,8 +106,8 @@ class WorkerThread(ConsumerThread):
         self._logger = logging.getLogger('huey.consumer.WorkerThread')
         super(WorkerThread, self).__init__(huey, utc, shutdown)
 
-    #def loop(self):
-        #self.check_message()
+    def loop(self):
+        self.check_message()
 
     def check_message(self):
         self._logger.debug('Checking for message')
