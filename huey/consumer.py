@@ -36,7 +36,7 @@ class ConsumerThread(threading.Thread):
     def run(self):
         while not self.shutdown.is_set():
             self.loop()
-            consumer._logger.error('Task not completed')
+            self._logger.error('Task not completed')
         self._logger.debug('Thread shutting down')
         self.on_shutdown()
 
